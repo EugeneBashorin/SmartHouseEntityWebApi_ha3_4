@@ -139,6 +139,7 @@ select[class="dropDownDeviceList"]:hover {
 
 .button:hover {
                 border: solid 1px #fc0824;
+                cursor: default;
     }
     
 .button:active { 
