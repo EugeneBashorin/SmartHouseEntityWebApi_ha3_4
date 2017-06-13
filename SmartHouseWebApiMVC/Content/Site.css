@@ -1,0 +1,154 @@
+﻿* {
+   font-weight: inherit;
+   font-family: inherit;
+   font-style: inherit;
+   font-size: 100%;
+   border: 0 none;
+   outline: 0;
+   margin: 0;
+   padding: 0;
+}
+
+body {
+      max-width: 75%;
+      min-width: 960px;
+      margin: 20px auto;
+      background-image: url(/Content/image/bg49.jpg);
+      font: 14px Verdana, Geneva, sans-serif;
+}
+
+div[class~="device-div"] {
+                          width: 300px;
+                          padding: 20px;
+                          float: left;
+                          margin: 3px;
+                          padding: 3px;
+                          background: #93a63e;
+                          color: #071790;
+                          border: 1px solid #f5f000;
+                          border-radius: 15px;
+                          box-shadow: inset 5px 5px 100px 3px #3d6b01;
+}
+
+div[class~="device-div"]:hover {
+                                background: #96c824;
+                                width: 300px;
+                                border: 1px solid #fc0824;
+                                box-shadow: 0px 0px 25px #fc2121,inset 5px 5px 100px 3px #3d6b01;
+    }
+
+input[type="text"] {
+                    padding: 5px 8px;
+                    border: solid 1px #87c48c;
+                    border-radius: 10px;
+                    font: 14px Verdana, Geneva, sans-serif;
+                    font-weight: bold;
+                    text-decoration: none;
+                    text-align: center;
+}
+
+input[type="text"]:hover {
+                          border: solid 1px #fc0824;
+                          box-shadow: 0px 0px 25px #fc2121, inset 5px 5px 100px 3px #e0f67f;
+    }
+
+.textAreaList {
+               resize: none;
+               padding: 5px 8px;
+               min-width: 200px;
+               max-height: 300px;
+               -webkit-box-sizing: border-box;
+               -moz-box-sizing: border-box;
+               box-sizing: border-box;
+               overflow: hidden;
+               border: solid 1px #87c48c;
+               border-radius: 10px;
+               font: 14px Verdana, Geneva, sans-serif;
+               text-align: left;
+               text-decoration: none;
+               font-weight: bold;
+               background: #e0f67f;
+               -moz-transition: color 1s, background-color 1s;
+               -webkit-transition: color 1s, background-color 1s;
+               -o-transition: color 1s, background-color 1s;
+               transition: color 1s, background-color 1s;
+    }
+
+.textAreaList:focus {
+                     resize: both;
+                     overflow: auto;
+                     max-height: 100%;
+                     background: #e0f67f;
+    }
+
+.textAreaList:hover {
+                     border: solid 1px #fc0824;
+                     box-shadow: 0px 0px 25px #fc2121, inset 5px 5px 100px 3px #e0f67f;
+    }
+
+select[class="dropDownDeviceList"] {
+                                    padding: 5px 8px;
+                                    border: solid 1px #87c48c;
+                                    border-radius: 10px;
+                                    font: 14px Verdana, Geneva, sans-serif;
+                                    font-weight: bold;
+                                    text-decoration: none;
+                                    text-align: center;
+    }
+
+select[class="dropDownDeviceList"]:hover {
+                                          border: solid 1px #fc0824;
+                                          box-shadow: 0px 0px 25px #fc2121, inset 5px 5px 100px 3px #e0f67f;
+    }
+
+.conditionRow {
+               width: 230px;
+               color:#444141;
+               font: 14px Verdana, Geneva, sans-serif;
+               font-weight: bolder;
+               word-wrap: break-word;
+               margin: 5px;
+               padding: 5px;
+    }
+
+.conditionRow:hover {
+                     text-shadow: 0px 0px 25px #39ff00;
+    }
+
+.img{
+     margin-top: 10px;
+    }
+
+.button {
+        text-decoration: none;
+        text-align: center;
+        padding: 5px 10px;
+        margin: 2px;
+        border: solid 1px #87c48c;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        font: 14px Verdana, Geneva, sans-serif;
+        font-weight: bold;
+        color: #023d04;
+        background-color: #61d43e;
+        background-image: -moz-linear-gradient(top, #61d43e 0%, #19a568 100%);
+        background-image: -webkit-linear-gradient(top, #61d43e 0%, #19a568 100%);
+        background-image: -o-linear-gradient(top, #61d43e 0%, #19a568 100%);
+    }
+
+.button:hover {
+                border: solid 1px #fc0824;
+    }
+    
+.button:active { 
+                border: solid 1px #fc0824; 
+                box-shadow: 0px 0px 25px #fc2121;                                    
+                font: 14px Verdana, Geneva, sans-serif;
+                font-weight: bold;
+                color: #fc2121;
+                background-color: #61d43e;
+                background-image: -moz-linear-gradient(top, #61d43e 0%, #19a568 100%);
+                background-image: -webkit-linear-gradient(top, #61d43e 0%, #19a568 100%);
+                background-image: -o-linear-gradient(top, #61d43e 0%, #19a568 100%);
+    }

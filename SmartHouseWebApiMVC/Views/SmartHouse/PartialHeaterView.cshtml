@@ -1,0 +1,15 @@
+﻿@using SimpleSmartHouse1._0
+@using MVCSmartHouse.ViewModels.AdaptModels
+@using MVCSmartHouse.ViewModels.AdaptInterfacies
+@model NewHeater
+
+State: @Model.ToString()
+<br />
+@if (Model.State == true)
+{
+    <img src="~/Content/image/RadiatorOn.png" class="img" alt="Radiator On">
+}
+else
+{
+    <img src="~/Content/image/RadiatorOff.png" class="img" alt="Radiator Off">
+}
