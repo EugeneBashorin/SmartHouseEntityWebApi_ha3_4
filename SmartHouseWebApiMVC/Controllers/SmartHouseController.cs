@@ -1,237 +1,69 @@
 ﻿using MVCSmartHouse.ViewModels.AdaptInterfacies;
-using MVCSmartHouse.ViewModels.AdaptModels;
 using SimpleSmartHouse1._0;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity;
+using SmartHouseWebApiMVC.Models;
 
 namespace MVCSmartHouse.Controllers
 {
     public class SmartHouseController : Controller
     {
-        IVolumeAble vol;
-        IChannelAble ch;
-        ISetChannelAble chList;
-        ITemperatureAble temperat;
+        private DeviceContext db = new DeviceContext();
 
         public ActionResult Index()
         {
-            IDictionary<int, Device> deviceDictionary;
-
-            if (Session["Device"] == null)
-            {
-                deviceDictionary = new SortedDictionary<int, Device>();
-                deviceDictionary.Add(1, new NewTV("TV", false, new Parametr(1, 50, 3), new Parametr(1, 45, 12), new ChangeSetting(), BrightnessLevel.Default, new ListFunction()));
-                deviceDictionary.Add(2, new NewRadio("Radio", false, new Parametr(1, 13, 3), new Parametr(1, 45, 10), new ChangeSetting(), new ListFunction()));
-                deviceDictionary.Add(3, new NewHeater("Heater", false, Mode.Eco, new Parametr(15, 34, 18), new ChangeSetting()));
-                deviceDictionary.Add(4, new NewAirCondition("AirCondition", false, Mode.Low, new Parametr(8, 26, 18), new ChangeSetting()));
-                deviceDictionary.Add(5, new NewIlluminator("Illuminator", false, IlluminatorBrightness.Default));
-                Session["Device"] = deviceDictionary;
-                Session["NextId"] = 6;
-            }
-            else
-            {
-                deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            }
-            SelectListItem[] deviceList = new SelectListItem[5];
-            deviceList[0] = new SelectListItem { Text = "TV", Value = "TV", Selected = true };
-            deviceList[1] = new SelectListItem { Text = "Radio", Value = "Radio" };
-            deviceList[2] = new SelectListItem { Text = "Heater", Value = "Heater" };
-            deviceList[3] = new SelectListItem { Text = "AirCodition", Value = "AirCodition" };
-            deviceList[4] = new SelectListItem { Text = "Illuminator", Value = "Illuminator" };
+            SelectListItem[] deviceList = new SelectListItem[3];
+            deviceList[0] = new SelectListItem { Text = "Heater", Value = "Heater" };
+            deviceList[1] = new SelectListItem { Text = "AirCondition", Value = "AirCondition" };
+            deviceList[2] = new SelectListItem { Text = "Illuminator", Value = "Illuminator" };
             ViewBag.DeviceList = deviceList;
-            return View(deviceDictionary);
+
+            return View(db.Devices);
         }
 
-        //ADD
+         ////ADD
         public ActionResult Add(string device)
         {
             Device newDevice;
             switch (device)
             {
-                default:
-                    newDevice = new NewTV("TV", false, new Parametr(1, 50, 3), new Parametr(1, 45, 15), new ChangeSetting(), BrightnessLevel.Default, new ListFunction());
-                    break;
-                case "Radio":
-                    newDevice = new NewRadio("Radio", false, new Parametr(1, 13, 3), new Parametr(1, 45, 15), new ChangeSetting(), new ListFunction());
-                    break;
                 case "Heater":
-                    newDevice = new NewHeater("Heater", false, Mode.Eco, new Parametr(8, 15, 12), new ChangeSetting());
+                    newDevice = new Heater("Heater", false, Mode.Eco, 18);
                     break;
                 case "AirCondition":
-                    newDevice = new NewAirCondition("AirCondition", false, Mode.Low, new Parametr(8, 15, 12), new ChangeSetting());
+                    newDevice = new AirCondition("AirCondition", false, Mode.Low, new Parametr(8, 15, 12));
                     break;
                 case "Illuminator":
-                    newDevice = new NewIlluminator("Illuminator", false, IlluminatorBrightness.Default);
-                    break;
-            }
-            int id = (int)Session["NextId"];
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            deviceDictionary.Add(id, newDevice);
-            id++;
-            Session["NextId"] = id;
-            return RedirectToAction("Index");
-        }
-
-        public ActionResult MainFunc(int id, string command)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            if (deviceDictionary[id] is Device)
-            {
-                if (deviceDictionary[id] is IVolumeAble)
-                {
-                    vol = (IVolumeAble)deviceDictionary[id];//inc decr VOLUME
-                }
-                if (deviceDictionary[id] is IChannelAble)
-                {
-                    ch = (IChannelAble)deviceDictionary[id];//inc decr CHANNEL
-                }
-                if (deviceDictionary[id] is ISetChannelAble)
-                {
-                    chList = (ISetChannelAble)deviceDictionary[id];//Load Show  CHAN_LIst  HIDE_LIst 
-                }
-                if (deviceDictionary[id] is ITemperatureAble)
-                {
-                    temperat = (ITemperatureAble)deviceDictionary[id];// inc decr TEMPERATURE
-                }
-
-                switch (command)
-                {
-                    case "On":
-                        deviceDictionary[id].SwtchOn();
-                        break;
-                    case "Off":
-                        deviceDictionary[id].SwtchOff();
-                        break;
-                    case "Del":
-                        deviceDictionary.Remove(id);
-                        break;
-                    case "IncVol":
-                        vol.IncreaseVolume();
-                        break;
-                    case "DecVol":
-                        vol.DecreaseVolume();
-                        break;
-                    case "IncCh":
-                        ch.IncreaseChannel();
-                        break;
-                    case "DecCh":
-                        ch.DecreaseChannel();
-                        break;
-                    case "LoadChan":
-                        chList.LoadChannel();
-                        break;
-                    case "ShowChan":
-                        if (deviceDictionary[id].State)
-                        {
-                            if (deviceDictionary[id] is NewTV)
-                            {
-                                Session["TVList"] = chList.ShowChannelList();
-                            }
-                            if (deviceDictionary[id] is NewRadio)
-                            {
-                                Session["RadioList"] = chList.ShowChannelList();
-                            }
-                        }
-                        break;
-                    case "HideChan":
-                        if (chList is NewTV)
-                        {
-                            Session["TVList"] = null;
-                        }
-                        if (chList is NewRadio)
-                        {
-                            Session["RadioList"] = null;
-                        }
-                        break;
-                    case "IncTemp":
-                        temperat.IncreaseTemperature();
-                        break;
-                    case "DecTemp":
-                        temperat.DecreaseTemperature();
-                        break;
-                }
-            }
-            return RedirectToAction("Index");
-        }
-
-        //HandSetTemperatureHeater
-        public ActionResult SetHeatTemperature(int id, int warmTemper = 15)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetTempWarmAble)deviceDictionary[id]).HandSetTemperature(warmTemper);
-            return RedirectToAction("Index");
-        }
-        //HandSetTemperatureAC
-        public ActionResult SetColdTemperature(int id, int coldTemper = 15)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetTempColdAble)deviceDictionary[id]).HandSetTemperature(coldTemper);
-            return RedirectToAction("Index");
-        }
-
-        //HandSetVolume
-        public ActionResult SetTVVolume(int id, int tvVolume = 8)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetTVVolumeAble)deviceDictionary[id]).HandSetVolume(tvVolume);
-            return RedirectToAction("Index");
-        }
-
-        public ActionResult SetRadioVolume(int id, int rVolume = 8)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetRadioVolumeAble)deviceDictionary[id]).HandSetVolume(rVolume);
-            return RedirectToAction("Index");
-        }
-
-        //HandSetChannelForTV
-        public ActionResult SetTVChannel(int id, int tvChannel = 8)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetTVChannelAble)deviceDictionary[id]).HandSetChannel(tvChannel);
-            return RedirectToAction("Index");
-        }
-
-        //HandSetChannelForRadio
-        public ActionResult SetRadioChannel(int id, int rChannel = 8)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            ((IHandSetRadioChannelAble)deviceDictionary[id]).HandSetChannel(rChannel);
-            return RedirectToAction("Index");
-        }
-
-        //SetBrightMode 
-        public ActionResult SetBrightMode(int id, string brightMode)
-        {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            IMultimediaBrightAble bMode = (IMultimediaBrightAble)deviceDictionary[id];
-            Session["BrightMode"] = brightMode;
-            switch (brightMode)
-            {
-                case "Bright":
-                    bMode.SetMaxMode();
-                    break;
-                case "Medium":
-                    bMode.SetMiddleMode();
-                    break;
-                case "Low":
-                    bMode.SetMinMode();
+                    newDevice = new Illuminator("Illuminator", false, IlluminatorBrightness.Default);
                     break;
                 default:
-                    bMode.SetAutoMode();
-                    break;
+                    newDevice = new Illuminator("Illuminator", false, IlluminatorBrightness.Default);
+                   break;
             }
+            db.Devices.Add(newDevice);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         //SetBrightMode 
-        public ActionResult SetIlluminatorBright(int id, string ill)
+        public ActionResult SetIlluminatorBright(int? id, string ill)
         {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            IlluminatorModeAble illum = (IlluminatorModeAble)deviceDictionary[id];
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            Device device = db.Devices.Find(id);
+
+            if (device == null)
+            {
+                return HttpNotFound();
+            }
+            IlluminatorModeAble illum = (IlluminatorModeAble)device;
             Session["illBright"] = ill;
             switch (ill)
             {
@@ -248,15 +80,26 @@ namespace MVCSmartHouse.Controllers
                     illum.SetAutoMode();
                     break;
             }
-            Session["Device"] = deviceDictionary;
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         //SetMode
-        public ActionResult SetWarmMode(int id, string warmMode)
+        public ActionResult SetWarmMode(int? id, string warmMode)
         {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            IWarmModeAble wMode = (IWarmModeAble)deviceDictionary[id];
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            Device device = db.Devices.Find(id);
+
+            if (device == null)
+            {
+                return HttpNotFound();
+            }
+            IWarmModeAble wMode = (IWarmModeAble)device;
             Session["wMode"] = warmMode;
             switch (warmMode)
             {
@@ -273,13 +116,25 @@ namespace MVCSmartHouse.Controllers
                     wMode.SetAutoMode();
                     break;
             }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        public ActionResult SetColdMode(int id, string coldMode)
+        public ActionResult SetColdMode(int? id, string coldMode)
         {
-            IDictionary<int, Device> deviceDictionary = (SortedDictionary<int, Device>)Session["Device"];
-            IColdModeAble cMode = (IColdModeAble)deviceDictionary[id];
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            Device device = db.Devices.Find(id);
+
+            if (device == null)
+            {
+                return HttpNotFound();
+            }
+            IColdModeAble cMode = (IColdModeAble)device;
             Session["Mode"] = coldMode;
             switch (coldMode)
             {
@@ -296,13 +151,140 @@ namespace MVCSmartHouse.Controllers
                     cMode.SetAutoMode();
                     break;
             }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        public ActionResult RenderState(NewHeater model)
+        //Partial for Illuminator
+        public PartialViewResult RenderStateLamp(Illuminator model)
+        {
+         return PartialView("PartialLampView", model);
+        }
+
+        //Partial for Heater
+        public PartialViewResult RenderStateHeater(Heater model)
         {
             return PartialView("PartialHeaterView", model);
         }
+
+        //Partial for AirCondition
+        public PartialViewResult RenderStateAC(AirCondition model)
+        {
+            return PartialView("PartialACView", model);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+         
+        //WebApi
+
+        //public ActionResult MainFunc(int? id, string command)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    if (device is Device)
+        //    {
+        //        if (device is ITemperatureAble)
+        //        {
+        //            temperat = (ITemperatureAble)device;
+        //        }
+
+        //        switch (command)
+        //        {
+        //            case "On":
+        //                device.SwtchOn();
+        //                break;
+        //            case "Off":
+        //                device.SwtchOff();
+        //                break;
+        //            case "IncTemp":
+        //                temperat.IncreaseTemperature();
+        //                break;
+        //            case "DecTemp":
+        //                temperat.DecreaseTemperature();
+        //                break;
+        //        }
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
+        //HandSetTemperatureHeater
+        //public ActionResult SetHeatTemperature(int? id, int warmTemper = 15)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    ((IHandSetTempWarmAble)device).HandSetTemperature(warmTemper);
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
+        //HandSetTemperatureAC
+        //public ActionResult SetColdTemperature(int? id, int coldTemper = 15)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    ((IHandSetTempColdAble)device).HandSetTemperature(coldTemper);
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    db.Devices.Remove(device);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
     }
 }
-

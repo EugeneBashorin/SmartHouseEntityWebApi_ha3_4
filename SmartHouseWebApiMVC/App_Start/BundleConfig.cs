@@ -23,8 +23,8 @@ namespace SmartHouseWebApiMVC
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/heatDevice").Include(
-                       "~/Scripts/heatDevice.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jScript").Include(
+                       "~/Scripts/jScript.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

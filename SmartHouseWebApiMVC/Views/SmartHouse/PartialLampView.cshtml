@@ -1,0 +1,57 @@
+﻿@using MVCSmartHouse.ViewModels.AdaptInterfacies;
+@using SimpleSmartHouse1._0
+@model SimpleSmartHouse1._0.Illuminator
+
+<div class="conditionRow">
+    Device: @Model.Name
+    <br />
+    @Model.ToString()
+    <br>
+    <br>
+</div>
+@* SET OnOfDel MVC*@
+@*<span>@Html.ActionLink("On", "MainFunc", new { id = Model.Id, command = "On" }, new { @class = "button" })</span><!-- ON -->
+<span>@Html.ActionLink("Off", "MainFunc", new { id = Model.Id, command = "Off" }, new { @class = "button" })</span><!-- OFF -->
+<span>@Html.ActionLink("Del", "Delete", new { id = Model.Id }, new { @class = "button" })</span><!-- DEL -->
+<br>
+<br>*@
+
+@* SET OnOfDel WebAPI*@
+<span>
+    <a id="on-@(Model.Id)" onclick='sendSwitchParamAjax(@Model.Id,"on")' class="button">on</a>
+</span>
+<span>
+    <a id="off-@(Model.Id)" onclick='sendSwitchParamAjax(@Model.Id,"off")' class="button">off</a>
+</span>
+<span>
+    <a id="del-@(Model.Id)" onclick='sendDelAjax(@Model.Id)' class="button">del</a>
+</span>
+<input type="hidden" id="Index-@Model.Id" value="@Model.Id" name="itemId">
+<input type="hidden" id="deviceName-@Model.Id" value="Lamp" name="itemId">
+<br /><br />
+@* Image *@
+@if (Model.State == true)
+{
+    <img src="~/Content/image/onLamp.png" class="img" alt="Lamp On">
+}
+else
+{
+    <img src="~/Content/image/offLamp.png" class="img" alt="Lamp Off">
+}
+<br>
+<br>
+@* ***** *@
+@* SET MODE BrightMode*@
+    @Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
+                               IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
+                               (string)Session["illBright"], new { id = "brMode", @class = "dropDownDeviceList" })
+
+    <input type="submit" id="@Model.Id" formaction="SetIlluminatorBright/@Model.Id" class="button" value="Set bright" />
+@* SET MODE Api *@
+<br>@*<br>
+<span>
+    <a id="bri-@(Model.Id)" onclick='sendAjaxSetBright(@Model.Id)' class="button">SetBrightApi</a>
+</span>
+<br>
+<br>*@
+

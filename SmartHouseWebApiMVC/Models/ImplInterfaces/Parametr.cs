@@ -15,10 +15,17 @@ namespace SimpleSmartHouse1._0
         {
             get {return current;}
             set {if (Max < value)
+                {
                     current = Max;
+                }
                 else if (Min > value)
+                {
                     current = Min;
-                else { current = value; }
+                }
+                else
+                {
+                    current = value;
+                }
             }
         }
         

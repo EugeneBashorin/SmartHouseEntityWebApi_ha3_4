@@ -1,43 +1,51 @@
-﻿namespace SimpleSmartHouse1._0
+﻿using MVCSmartHouse.ViewModels.AdaptInterfacies;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+
+namespace SimpleSmartHouse1._0
 {
-    class AirCondition : Device, IModeDefaultSettingsAble, ITemperatureAble, IModeAble<Mode>
+    [DataContract]
+   public class AirCondition : Device, IModeDefaultSettingsAble, ITemperatureAble, IModeAble<Mode>, IHandSetTempColdAble, IColdModeAble, IIncDecTemperatureAble
     {
+        [DataMember]
+        [Required]
         public Mode Mode
         {
             get { return mode; }
             set { mode = value; }
         }
-
         private Mode mode;
-        public IChangeSettingAble ChangeParams;
-        public IParametrAble TemperatureParam;
+        public IParametrAble TemperatureParam = new Parametr(8, 26, 18);
 
+        [DataMember]
+        [Required]
         public int Temperature
         {
             get { return TemperatureParam.Current; }
             set { TemperatureParam.Current = value; }
         }
-        public AirCondition(string name, bool state, Mode mode, IParametrAble temperatureParam, IChangeSettingAble сhangeParams) : base(name, state)
-        {
-            Name = name;
-            State = state;
+
+        public AirCondition()
+        { }
+
+        public AirCondition( string name, bool state, Mode mode, IParametrAble temperatureParam) : base( name, state)
+        {           
             this.mode = mode;
             TemperatureParam = temperatureParam;
-            ChangeParams = сhangeParams;
         }
         public void IncreaseTemperature()
         {
-            Temperature = ChangeParams.Increase(Temperature);
+            Temperature++;
         }
 
         public void DecreaseTemperature()
         {
-            Temperature = ChangeParams.Decrease(Temperature);
+            Temperature--;
         }
 
         public void HandSetTemperature(int inputData)
         {
-            Temperature = ChangeParams.HandSet(inputData);
+            Temperature = inputData;
         }
 
         public void SetMaxMode()

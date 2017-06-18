@@ -1,6 +1,6 @@
 ﻿@using SimpleSmartHouse1._0
 @using MVCSmartHouse.ViewModels.AdaptInterfacies
-@model SimpleSmartHouse1._0.Heater
+@model SimpleSmartHouse1._0.AirCondition
 
 <div class="conditionRow">
     Device: @Model.Name
@@ -26,38 +26,37 @@
     <a id="del-@(Model.Id)" onclick='sendDelAjax(@Model.Id)' class="button">del</a>
 </span>
 <input type="hidden" id="Index-@Model.Id" value="@Model.Id" name="itemId">
-<input type="hidden" id="deviceName-@Model.Id" value="Heater" name="itemId">
+<input type="hidden" id="deviceName-@Model.Id" value="AC" name="itemId">
 <br /><br />
 @* Image *@
 @if (Model.State == true)
 {
-    <img src="~/Content/image/RadiatorOn.png" class="img" alt="Radiator On">
+    <img src="~/Content/image/onAC.png" class="img" alt="Heater On">
 }
 else
 {
-    <img src="~/Content/image/RadiatorOff.png" class="img" alt="Radiator Off">
+    <img src="~/Content/image/offAC.png" class="img" alt="Heater Off">
 }
-
 <br>
 <br>
 @* SET TEMP MVC *@
-@*<input type="submit" id="@Model.Id" formaction="SetHeatTemperature/@Model.Id" class="button" value="Set temperature" />
-@Html.TextBox("warmTemper", Session["warmTemper"], new { id = "warmTemper" + Model.Id, size = "3" })
-<br />
-<br />*@
+@*<input type="submit" id="@Model.Id" formaction="SetColdTemperature/@Model.Id" class="button" value="Set temperature" />
+    @Html.TextBox("coldTemper", Session["coldTemper"], new { id = "coldTemper" + Model.Id, size = "3" })
+    <br />
+    <br />*@
 @* SET TEMP Api *@
 <span>
-    <a id="setParam-@(Model.Id)" onclick='sendSetParamAjax(@Model.Id,"heatTemp")' class="button">Set temperature</a>
+    <a id="setParam-@(Model.Id)" onclick='sendSetParamAjax(@Model.Id,"coldTemp")' class="button">Set temperature</a>
 </span>
-@Html.TextBox("warmTemper", "", new { id = "handSetPar-heatTemp" + Model.Id, size = "3" })
+@Html.TextBox("coldTemper", "", new { id = "handSetPar-" + "coldTemp" + Model.Id, size = "3" })
 <br />
 <br />
 
 @* INC/DEC TEMP MVC*@
 @*@Html.ActionLink("Temp +", "MainFunc", new { id = Model.Id, command = "IncTemp" }, new { @class = "button" })
-@Html.ActionLink("Temp -", "MainFunc", new { id = Model.Id, command = "DecTemp" }, new { @class = "button" })
-<br />
-<br />*@
+    @Html.ActionLink("Temp -", "MainFunc", new { id = Model.Id, command = "DecTemp" }, new { @class = "button" })
+    <br />
+    <br />*@
 @* INC/DEC TEMP Api *@
 <span>
     <a id="incT-@(Model.Id)" onclick='sendSwitchParamAjax(@Model.Id,"IncTemp")' class="button">Temp +</a>
@@ -67,10 +66,9 @@ else
 </span>
 <br />
 <br />
-
 @* SET MODE Mode MVC*@
-    @Html.DropDownList("warmMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                                            (string)Session["wMode"], new { id = "wMode" + Model.Id, @class = "dropDownDeviceList" })
-    <input type="submit" id="@Model.Id" formaction="SetWarmMode/@Model.Id" class="button" value="Set Warm Mode" />
+    @Html.DropDownList("coldMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
+                         (string)Session["cMode"], new { id = "wMode" + Model.Id, @class = "dropDownDeviceList" })
+    <input type="submit" id="@Model.Id" formaction="SetColdMode/@Model.Id" class="button" value="Set Cold Mode" />
 <br />
 @* Api *@

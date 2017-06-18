@@ -1,8 +1,13 @@
 ﻿
+using MVCSmartHouse.ViewModels.AdaptInterfacies;
+using System.Runtime.Serialization;
+
 namespace SimpleSmartHouse1._0
 {
-  class Illuminator : Device, IModeDefaultSettingsAble, IBrightAble<IlluminatorBrightness>
+    [DataContract]
+    public class Illuminator : Device, IModeDefaultSettingsAble, IBrightAble<IlluminatorBrightness>, IlluminatorModeAble
     {
+        [DataMember]
         public IlluminatorBrightness Bright
         {
             get { return bright; }
@@ -10,10 +15,11 @@ namespace SimpleSmartHouse1._0
         }
         private IlluminatorBrightness bright;
 
-        public Illuminator(string name, bool state, IlluminatorBrightness bright) : base(name, state)
+        public Illuminator()
+        {  }
+
+        public Illuminator(/*int id,*/ string name, bool state, IlluminatorBrightness bright) : base(/*id,*/ name, state)
         {
-            Name = name;
-            State = state;
             this.bright = bright;
         }
 

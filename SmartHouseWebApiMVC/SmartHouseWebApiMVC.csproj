@@ -44,6 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -52,6 +60,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -139,49 +148,31 @@
     <Compile Include="Models\DeviceClasses\Device.cs" />
     <Compile Include="Models\DeviceClasses\Heater.cs" />
     <Compile Include="Models\DeviceClasses\Illuminator.cs" />
-    <Compile Include="Models\DeviceClasses\Radio.cs" />
-    <Compile Include="Models\DeviceClasses\TV.cs" />
+    <Compile Include="Models\DeviceContext.cs" />
+    <Compile Include="Models\DeviceContextInitializer.cs" />
     <Compile Include="Models\Enums\BrightnessLevel.cs" />
     <Compile Include="Models\Enums\IlluminatorBrightness.cs" />
     <Compile Include="Models\Enums\Mode.cs" />
     <Compile Include="Models\ImplInterfaces\ChangeSetting.cs" />
-    <Compile Include="Models\ImplInterfaces\ListFunction.cs" />
     <Compile Include="Models\ImplInterfaces\Parametr.cs" />
     <Compile Include="Models\Interfaces\IBrightAble.cs" />
     <Compile Include="Models\Interfaces\IChangeSettingAble.cs" />
-    <Compile Include="Models\Interfaces\IChannelAble.cs" />
-    <Compile Include="Models\Interfaces\IListOrderAble.cs" />
     <Compile Include="Models\Interfaces\IModeAble.cs" />
     <Compile Include="Models\Interfaces\IModeDefaultSettingsAble.cs" />
     <Compile Include="Models\Interfaces\IParametrAble.cs" />
-    <Compile Include="Models\Interfaces\ISetChannelAble.cs" />
     <Compile Include="Models\Interfaces\ITemperatureAble.cs" />
-    <Compile Include="Models\Interfaces\IVolumeAble.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IBrightAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IColdModeAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IHandSetRadioChannelAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IHandSetRadioVolumeAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IHandSetTempColdAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IHandSetTempWarmAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IHandSetTVChannelAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IHandSetTVVolumeAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IIncDecChannelAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IIncDecTemperatureAble.cs" />
-    <Compile Include="ViewModels\AdaptInterfaceies\IIncDecVolumeAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IlluminatorModeAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IMultimediaBrightAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IShowLoadListAble.cs" />
     <Compile Include="ViewModels\AdaptInterfaceies\IWarmModeAble.cs" />
-    <Compile Include="ViewModels\AdaptModels\NewAirCondition.cs" />
-    <Compile Include="ViewModels\AdaptModels\NewHeater.cs" />
-    <Compile Include="ViewModels\AdaptModels\NewIlluminator.cs" />
-    <Compile Include="ViewModels\AdaptModels\NewRadio.cs" />
-    <Compile Include="ViewModels\AdaptModels\NewTV.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\ChannelList\ReadRadioChannel.txt" />
-    <Content Include="App_Data\ChannelList\ReadTVChannel.txt" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\image\bg49.jpg" />
@@ -202,7 +193,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\heatDevice.js" />
+    <Content Include="Scripts\jScript.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -227,8 +218,12 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\SmartHouse\Index.cshtml" />
     <Content Include="Views\SmartHouse\PartialHeaterView.cshtml" />
+    <Content Include="Views\SmartHouse\PartialLampView.cshtml" />
+    <Content Include="Views\SmartHouse\PartialACView.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />

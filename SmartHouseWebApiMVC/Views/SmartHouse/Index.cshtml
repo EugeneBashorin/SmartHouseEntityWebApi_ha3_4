@@ -2,7 +2,7 @@
 @using MVCSmartHouse.ViewModels.AdaptInterfacies;
 @using SimpleSmartHouse1._0
 
-@model IDictionary<int, Device>
+@model IEnumerable<Device>
 @{
     Layout = null;
 }
@@ -10,9 +10,10 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <title>Smart House</title>
-    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <script src="~/scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/scripts/bootstrap.min.js"></script>
     @Scripts.Render("~/bundles/heatDevice")
 </head>
 <body>
@@ -21,279 +22,33 @@
         @Html.DropDownList("device", (IEnumerable<SelectListItem>)ViewBag.DeviceList, new { @class = "dropDownDeviceList" })
         <input type="submit" value="Add" class="button" />
         <br />
+
         foreach (var item in Model)
         {
             <div class="device-div">
-                @*HEATER START to WebApi*@
-                @if (item.Value is IHandSetTempWarmAble)//Heater
+
+                @if (item is IlluminatorModeAble)
                 {
-                    <div class="conditionRow">
-                        Device: @item.Value.Name
-                        <br />
-                        <div id="state_@(item.Value.Name)">
-                            @Html.Partial("PartialHeaterView", item.Value)
-                        </div>
-                        <br />
-                    </div>
-
-                    <span>
-                        <a id="on-@(item.Key)" onclick='sendAjaxOn(@Html.Raw(Json.Encode(item.Value)));' class="button">OnState</a>
-                    </span>
-
-                    <span>
-                        <a id="off-@(item.Key)" onclick='sendAjaxOff(@Html.Raw(Json.Encode(item.Value)));' class="button">OffState</a>
-                    </span>
-
-                    <span>@Html.ActionLink("Del", "MainFunc", new { id = item.Key, command = "Del" }, new { @class = "button" })</span>
-                    <br />
-                    <br />
-
-                    <span>
-                        <a id="incTemp-@(item.Key)" onclick='sendAjaxIncTemp(@Html.Raw(Json.Encode(item.Value)));' class="button">IncTemp</a>
-                    </span>
-
-                    <span>
-                        <a id="decTemp-@(item.Key)" onclick='sendAjaxDecTemp(@Html.Raw(Json.Encode(item.Value)));' class="button">DecTemp</a>
-                    </span>
-                    <br />
-                    <br />
-                    @Html.TextBox("warmTemper", "", new { id = "warmTemper", size = "3" })
-                    <a id="setTemp-@(item.Key)" onclick='sendAjaxSetTemp(@Html.Raw(Json.Encode(item.Value)));' class="button">SendTemp</a>
-                    <br />
-                    <br />
-
-                    /*Set Mode*/
-                    @Html.DropDownList("warmMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                                                (string)Session["wMode"], new { id = "wMode", @class = "dropDownDeviceList" })
-
-                    <span>
-                        <a id="mode-@(item.Key)" onclick='sendAjaxSetMode(@Html.Raw(Json.Encode(item.Value)));' class="button">SetBright</a>
-                    </span>
-
-                    @*<input type="hidden" id="@item.Key-Index" value="@item.Key" name="itemId"> //to recognize Different id="" for each key
-                      <input type="hidden" id="@item.Key-Value" value="@Html.Raw(Json.Encode(item.Value))" name="itemValue">*@
-                }
-                @*HEATER END*@
-
-                @*Conditions String For Others Devices*@
-                @if (!(item.Value is IHandSetTempWarmAble))
-                {
-                    <div class="conditionRow">
-                        Device: @item.Value.Name
-                        <br />
-                        @item.Value.ToString()
-                        <br />
+                    <div id="result-@item.Id">
+                        @Html.Partial("PartialLampView", item)
                     </div>
                 }
-                @* @if (item.Value is IHandSetTempWarmAble)//Heater
-                    {
-                        if (item.Value.State == true)
-                        {
-                            <img src="~/Content/image/RadiatorOn.png" class="img" alt="Radiator On">
-                        }
-                        else
-                        {
-                            <img src="~/Content/image/RadiatorOff.png" class="img" alt="Radiator Off">
-                        }
-                    }
-
-                    else*@@if (item.Value is IHandSetTempColdAble)//AC
-                    {
-                        if (item.Value.State == true)
-                        {
-                            <
-                            <img src="~/Content/image/onAC.png" class="img" alt="Heater On">
-                        }
-                        else
-                        {
-                            <img src="~/Content/image/offAC.png" class="img" alt="Heater Off">
-                        }
-                    }
-                    else if (item.Value is IlluminatorModeAble)//lamp
-                    {
-                        if (item.Value.State == true)
-                        {
-                            <img src="~/Content/image/onLamp.png" class="img" alt="Lamp On">
-                        }
-                        else
-                        {
-                            <img src="~/Content/image/offLamp.png" class="img" alt="Lamp Off">
-                        }
-                    }
-                    else if (item.Value is IHandSetRadioChannelAble)//Radio
-                    {
-                        if (item.Value.State == true)
-                        {
-                            <img src="~/Content/image/RadioOn.png" class="img" alt="Radio On">
-                        }
-                        else
-                        {
-                            <img src="~/Content/image/RadioOff.png" class="img" alt="Radio Off">
-                        }
-                    }
-
-                    else if (item.Value is IHandSetTVChannelAble)//TV
-                    {
-                        if (item.Value.State == true)
-                        {
-                            <img src="~/Content/image/TVon.png" class="img" alt="TV On">
-                        }
-                        else
-                        {
-                            <img src="~/Content/image/TVoff.png" class="img" alt="TV Off">
-                        }
-                    }
-
-                    @*All Devices without Heater*@
-
-                    @if (!(item.Value is IHandSetTempWarmAble))
-                    {
-                        <br /><br />
-                        <span>@Html.ActionLink("On", "MainFunc", new { id = item.Key, command = "On" }, new { @class = "button" })</span><!-- ON -->
-                        <span>@Html.ActionLink("Off", "MainFunc", new { id = item.Key, command = "Off" }, new { @class = "button" })</span><!-- OFF -->
-                        <span>@Html.ActionLink("Del", "MainFunc", new { id = item.Key, command = "Del" }, new { @class = "button" })</span><!-- DEL -->
-                        <br /><br />
-
-                        @*if (item.Value is IHandSetTempWarmAble)
-                            {
-                                <input type="submit" id="@item.Key" formaction="SetHeatTemperature/@item.Key" class="button" value="Set temperature" />
-                                @Html.TextBox("warmTemper", Session["warmTemper"], new { id = "warmTemper" + item.Key, size = "3" })
-                                <br />
-                                <br />
-                            }*@
-                        <input type="submit" id="@item.Key" formaction="SetHeatTemperature/@item.Key" class="button" value="Set temperature" />
-                        <br />
-                        <br />
-
-
-                    if (item.Value is IHandSetTempColdAble)
-                    {
-                        <input type="submit" id="@item.Key" formaction="SetColdTemperature/@item.Key" class="button" value="Set temperature" />
-                        @Html.TextBox("coldTemper", Session["coldTemper"], new { id = "coldTemper" + item.Key, size = "3" })
-                        <br />
-                        <br />
-                    }
-
-                    if (item.Value is IIncDecTemperatureAble)
-                    {
-                        @Html.ActionLink("Temp +", "MainFunc", new { id = item.Key, command = "IncTemp" }, new { @class = "button" })
-                            @Html.ActionLink("Temp -", "MainFunc", new { id = item.Key, command = "DecTemp" }, new { @class = "button" })
-                            <br />
-                            <br />
-                        }
-
-
-                        if (item.Value is IMultimediaBrightAble)
-                        {
-                            <input type="submit" id="@item.Key" formaction="SetBrightMode/@item.Key" class="button" value="Set bright" />
-                            @Html.DropDownList("brightMode", new SelectList(new[] {BrightnessLevel.Bright.ToString(),BrightnessLevel.Medium.ToString(),
-                                               BrightnessLevel.Low.ToString(),BrightnessLevel.Default.ToString()}),
-                              (string)Session["BrightMode"], new { id = "brightMode" + item.Key, @class = "dropDownDeviceList" })
-                            <br />
-                        }
-
-                        if (item.Value is IHandSetTVVolumeAble)
-                        {
-                            <input type="submit" id="@item.Key" formaction="SetTVVolume/@item.Key" class="button" value="Set Volume" />
-                            @Html.TextBox("tvVolume", Session["tvVolume"], new { id = "tvVolume" + item.Key, size = "3" })
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IHandSetRadioVolumeAble)
-                        {
-                            <input type="submit" id="@item.Key" formaction="SetRadioVolume/@item.Key" class="button" value="Set Volume" />
-                            @Html.TextBox("rVolume", Session["rVolume"], new { id = "rVolume" + item.Key, size = "3" })
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IIncDecVolumeAble)
-                        {
-                            @Html.ActionLink("Volume +", "MainFunc", new { id = item.Key, command = "IncVol" }, new { @class = "button" })<!-- IncreaseVolume -->
-                            @Html.ActionLink("Volume -", "MainFunc", new { id = item.Key, command = "DecVol" }, new { @class = "button" })<!-- DecreaseVolume -->
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IHandSetTVChannelAble)
-                        {
-                            <input type="submit" id="@item.Key" formaction="SetTVChannel/@item.Key" class="button" value="Set Channel" /><!--  -->
-                            @Html.TextBox("tvChannel", Session["Channel"], new { id = "tvChannel" + item.Key, size = "3" })
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IHandSetRadioChannelAble)
-                        {
-                            <input type="submit" id="@item.Key" formaction="SetRadioChannel/@item.Key" class="button" value="Set Channel" /><!--  -->
-                            @Html.TextBox("rChannel", Session["rChannel"], new { id = "rChannel" + item.Key, size = "3" })
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IIncDecChannelAble)
-                        {
-                            @Html.ActionLink("Channel +", "MainFunc", new { id = item.Key, command = "IncCh" }, new { @class = "button" })
-                            @Html.ActionLink("Channel -", "MainFunc", new { id = item.Key, command = "DecCh" }, new { @class = "button" })
-                            <br />
-                            <br />
-                        }
-
-                        if (item.Value is IShowLoadListAble)
-                        {
-                            @Html.ActionLink("Load Chann List", "MainFunc", new { id = item.Key, command = "LoadChan" }, new { @class = "button" })
-                            <br />
-                            <br />
-                            @Html.ActionLink("Show Chann list", "MainFunc", new { id = item.Key, command = "ShowChan" }, new { @class = "button" })
-                            @Html.ActionLink("Hide Chann list", "MainFunc", new { id = item.Key, command = "HideChan" }, new { @class = "button" })
-                            <br />
-                            <br />
-                            if (item.Value.Name == "TV")
-                            {
-                                @Html.TextArea("TVlist" + @item.Key, (string)Session["TVList"], new { id = item.Key, @class = "textAreaList" });
-                            }
-                            if (item.Value.Name == "Radio")
-                            {
-                                @Html.TextArea("Radiolist" + @item.Key, (string)Session["RadioList"], new { id = item.Key, @class = "textAreaList" });
-                            }
-                        }
-
-                        @*@if (item.Value is IWarmModeAble) //Heater
-                            {
-                                @Html.DropDownList("warmMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                                                            (string)Session["wMode"], new { id = "wMode" + item.Key, @class = "dropDownDeviceList" })
-                                <input type="submit" id="@item.Key" formaction="SetWarmMode/@item.Key" class="button" value="Set Warm Mode" />
-                            }*@
-                        <input type="submit" id="@item.Key" formaction="SetWarmMode/@item.Key" class="button" value="Set Warm Mode" />
-
-
-                    if (item.Value is IColdModeAble)
-                    {
-                        @Html.DropDownList("coldMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                         (string)Session["cMode"], new { id = "cMode" + item.Key, @class = "dropDownDeviceList" })
-                        <input type="submit" id="@item.Key" formaction="SetColdMode/@item.Key" class="button" value="Set Cold Mode" />
-                    }
-
-                    if (item.Value is IlluminatorModeAble)
-                    {
-                        @Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
-                               IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
-                                    (string)Session["illBright"], new { id = "illBright" + item.Key, @class = "dropDownDeviceList" })
-                            <input type="submit" id="@item.Key" formaction="SetIlluminatorBright/@item.Key" class="button" value="Set bright" />
-                        }
-                    }
-                </div>
-
-                @*if (item.Value is IHandSetTempWarmAble)
-                    {
-                        <script>
-                            var index = $('#@item.Key-Index').val();
-                            var objectVal = $('#@item.Key-Value').val();
-                            Metod(objectVal, index);
-                        </script>
-                    }*@
+                else if (item is IHandSetTempWarmAble)
+                {
+                    <div id="result-@item.Id">
+                        @Html.Partial("PartialHeaterView", item)
+                    </div>
+                }
+                else if (item is IHandSetTempColdAble)
+                {
+                    <div id="result-@item.Id">
+                        @Html.Partial("PartialACView", item)
+                    </div>
+                }
+            </div>
         }
     }
+    @Scripts.Render("~/bundles/jScript")
+    <script src="~/Scripts/jScript.js"></script>
 </body>
 </html>

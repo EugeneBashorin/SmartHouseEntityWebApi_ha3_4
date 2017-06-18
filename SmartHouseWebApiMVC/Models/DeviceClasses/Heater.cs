@@ -1,47 +1,70 @@
 ﻿
+using MVCSmartHouse.ViewModels.AdaptInterfacies;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+
 namespace SimpleSmartHouse1._0
 {
- public class Heater :  Device, IModeDefaultSettingsAble, ITemperatureAble, IModeAble<Mode>
+    [DataContract]
+    public class Heater : Device, IModeDefaultSettingsAble, ITemperatureAble, IModeAble<Mode>, IHandSetTempWarmAble, IWarmModeAble, IIncDecTemperatureAble
     {
-        
-        public Mode Mode{
-            get { return mode; }
-            set { mode = value; }
+        public const int Max = 34;
+        public const int Min = 15;
+        public int current = 18;
+
+        public int Current
+        {
+            get { return current; }
+            set
+            {
+                if (Max < value)
+                {
+                    current = Max;
+                }
+                else if (Min > value)
+                {
+                    current = Min;
+                }
+                else
+                {
+                    current = value;
+                }
+            }
         }
 
-        private Mode mode;
-        public ChangeSetting ChangeParams;  //Exept IChangeSettingAble to USE with API 
-        public Parametr TemperatureParam = new Parametr(15, 34, 18);   //Exept IParametrAble to USE with API 
-        
-        public int Temperature{
-            get { return TemperatureParam.Current;}
-            set { TemperatureParam.Current = value;}
+        [DataMember]
+        [Required]
+        public Mode Mode { get; set; }
+
+        [DataMember]
+        [Required]
+        public int Temperature
+        {
+            get { return Current; }
+            set { Current = value; }
         }
 
         public Heater()
         { }
-        public Heater(string name, bool state, Mode mode, Parametr temperatureParam, ChangeSetting сhangeParams) : base(name, state)
+        public Heater(string name, bool state, Mode mode, int temperature) : base(name, state)
         {
-            Name = name;
-            State = state;
-            this.mode = mode;
-            TemperatureParam = temperatureParam;
-            ChangeParams = сhangeParams;
+            Mode = mode;
+            Temperature = temperature;
         }
 
         public void IncreaseTemperature()
         {
-            Temperature = ChangeParams.Increase(Temperature);
+            Temperature++;
         }
 
         public void DecreaseTemperature()
         {
-            Temperature = ChangeParams.Decrease(Temperature);
+            Temperature--;
         }
 
         public void HandSetTemperature(int inputData)
         {
-            Temperature = ChangeParams.HandSet(inputData);
+            Temperature = inputData;
         }
 
         public void SetMaxMode()

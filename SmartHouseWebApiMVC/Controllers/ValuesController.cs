@@ -1,8 +1,10 @@
-﻿using MVCSmartHouse.ViewModels.AdaptModels;
+﻿using MVCSmartHouse.ViewModels.AdaptInterfacies;
 using Newtonsoft.Json.Linq;
 using SimpleSmartHouse1._0;
+using SmartHouseWebApiMVC.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,82 +15,120 @@ namespace SmartHouseWebApiMVC.Controllers
 {
     public class ValuesController : ApiController
     {
-        public NewHeater[] newDev;
+        private DeviceContext db = new DeviceContext();
 
-        public IEnumerable<NewHeater> SaveDev(NewHeater newStateDev)
+        [Route("api/values/{id}/{command}")]
+        public HttpResponseMessage PutSwitchFunc(int id, string command)
         {
-            newDev = new NewHeater[] { newStateDev };
-            return newDev;
-            
+            Device device = db.Devices.Find(id);
+            switch (command)
+            {
+                case "on":
+                    device.SwtchOn();
+                    break;
+                case "off":
+                    device.SwtchOff();
+                    break;
+                case "IncTemp":
+                    ((ITemperatureAble)device).IncreaseTemperature();
+                    break;
+                case "DecTemp":
+                    ((ITemperatureAble)device).DecreaseTemperature();
+                    break;
+            }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, device);
         }
 
-        [Route("api/values/OnState")]
-        public JsonResult<NewHeater> PutStateOn([FromBody] JObject model)
+
+        [Route("api/values/{id}/{command}/{value}")]
+        public HttpResponseMessage PutSetParam(int id, string command, int value)
         {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOn();
-            SaveDev(device);
-            return Json(device);
+            Device device = db.Devices.Find(id);
+            switch (command)
+            {
+                case "heatTemp":
+                    ((IHandSetTempWarmAble)device).HandSetTemperature(value);
+                    break;
+                case "coldTemp":
+                    ((IHandSetTempColdAble)device).HandSetTemperature(value);
+                    break;
+            }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, device);
         }
 
-        [Route("api/values/OffState")]
-        public JsonResult<NewHeater> PutStateOff([FromBody] JObject model)
-        {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOff();
-            return Json(device);
-        }
-
-        [Route("api/values/IncTemp")]
-        public JsonResult<NewHeater> PutIncTemp([FromBody] JObject model)
-        {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOn();
-            device?.IncreaseTemperature();
-            return Json(device);
-        }
-
-        [Route("api/values/DecTemp")]
-        public JsonResult<NewHeater> PutDecTemp([FromBody] JObject model)
-        {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOn();
-            device?.DecreaseTemperature();
-            return Json(device);
-        }
-
-        [Route("api/values/SetTemp/{value}")]
-        public JsonResult<NewHeater> PutSetTemp([FromBody] JObject model, int value)
-        {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOn();
-            device?.HandSetTemperature(value);
-            return Json(device);
-        }
 
         [Route("api/values/SetMode/{value}")]
-        public JsonResult<NewHeater> PutSetMode([FromBody] JObject model, string value)
+        public HttpResponseMessage PutSetMode(int? id, string value)
         {
-            var device = model.ToObject<NewHeater>();
-            device?.SwtchOn();
-            if (value == "Turbo")
+            Device device = db.Devices.Find(id);
+            switch (value)
             {
-                device.SetMaxMode();
+                case "Turbo":
+                    ((IColdModeAble)device).SetMaxMode();
+                    break;
+                case "Eco":
+                    ((IColdModeAble)device).SetMiddleMode();
+                    break;
+                case "Low":
+                    ((IColdModeAble)device).SetMinMode();
+                    break;
+                default:
+                    ((IColdModeAble)device).SetAutoMode();
+                    break;
             }
-            else if (value == "Eco")
-            {
-                device.SetMiddleMode();
-            }
-            else if (value == "Low")
-            {
-                device.SetMinMode();
-            }
-            else
-            {
-                device.SetAutoMode();
-            }
-            return Json(device);
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, device);
         }
+
+
+        [Route("api/values/SetBright/{value}")]
+        public HttpResponseMessage PutSetBright(int? id, string value)
+        {
+            Device device = db.Devices.Find(id);
+            switch (value)
+            {
+                case "BrightWhite":
+                    ((IlluminatorModeAble)device).SetMaxMode();
+                    break;
+                case "DayLight":
+                    ((IlluminatorModeAble)device).SetMiddleMode();
+                    break;
+                case "WarmWhite":
+                    ((IlluminatorModeAble)device).SetMinMode();
+                    break;
+                default:
+                    ((IlluminatorModeAble)device).SetAutoMode();
+                    break;
+            }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, device);
+        }
+
+
+        [HttpDelete]
+        [Route("api/values/Delete/{id}")]
+        public void Delete(int id)
+        {
+            Device device = db.Devices.Find(id);
+            db.Devices.Remove(device);
+            db.SaveChanges();
+        }
+
+
+        protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            db.Dispose();
+        }
+        base.Dispose(disposing);
+    }
 
     }
 }
