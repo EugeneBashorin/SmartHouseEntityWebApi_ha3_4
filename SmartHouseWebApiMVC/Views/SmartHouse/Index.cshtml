@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="~/Content/Site.css" />
     <script src="~/scripts/jquery-1.10.2.min.js"></script>
     <script src="~/scripts/bootstrap.min.js"></script>
-    @Scripts.Render("~/bundles/heatDevice")
+    @Scripts.Render("~/bundles/jScript")
 </head>
 <body>
     @using (Html.BeginForm("Add", "SmartHouse"))
@@ -25,15 +25,67 @@
 
         foreach (var item in Model)
         {
-            <div class="device-div">
+            <div class="device-div" id="dev-@item.Id">
 
-                @if (item is IlluminatorModeAble)
+                @*************************@
+@if (item is IlluminatorModeAble)
+{
+                <div class="conditionRow" id="conditionRow-@item.Id">
+                    Device: @item.Name
+                    <br />
+                    @item.ToString()
+                    <br>
+                    <br>
+                </div>       
+                @* SET OnOfDel WebAPI*@
+                <span>
+                    <a id="on-@(item.Id)" onclick='sendSwitchParamAjax(@item.Id,"on")' class="button">on</a>
+                </span>
+                <span>
+                    <a id="off-@(item.Id)" onclick='sendSwitchParamAjax(@item.Id,"off")' class="button">off</a>
+                </span>
+                <span>
+                    <a id="del-@(item.Id)" onclick='sendDelAjax(@item.Id)' class="button">del</a>
+                </span>
+                @*<input type="hidden" id="command-@Model.Id" value="on" name="itemId">*@
+                <input type="hidden" id="Index-@item.Id" value="@item.Id" name="itemId">
+                <input type="hidden" id="deviceName-@item.Id" value="Lamp" name="itemId">
+                <br /><br />
+                @* Image *@
+                if (item.State == true)
+                {
+                    <img src="~/Content/image/onLamp.png" id="state-@item.Id" class="img" alt="Lamp On">
+                }
+                else
+                {
+                    <img src="~/Content/image/offLamp.png" id="state-@item.Id" class="img" alt="Lamp Off">
+                }
+                <br>
+                <br>
+                @* ***** *@
+                @* SET MODE BrightMode*@
+                @Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
+                               IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
+                        (string)Session["illBright"], new { id = "brMode", @class = "dropDownDeviceList" })
+
+                <input type="submit" id="@item.Id" formaction="SetIlluminatorBright/@item.Id" class="button" value="Set bright" />
+                @* SET MODE Api *@
+                <br>@*<br>
+        <span>
+            <a id="bri-@(Model.Id)" onclick='sendAjaxSetBright(@Model.Id)' class="button">SetBrightApi</a>
+        </span>
+        <br>
+        <br>*@
+
+                @*************************@
+}
+                @*@if (item is IlluminatorModeAble)
                 {
                     <div id="result-@item.Id">
                         @Html.Partial("PartialLampView", item)
                     </div>
                 }
-                else if (item is IHandSetTempWarmAble)
+                else*@ @if (item is IHandSetTempWarmAble)
                 {
                     <div id="result-@item.Id">
                         @Html.Partial("PartialHeaterView", item)

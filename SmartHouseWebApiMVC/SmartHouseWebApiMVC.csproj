@@ -146,17 +146,20 @@
     </Compile>
     <Compile Include="Models\DeviceClasses\AirCondition.cs" />
     <Compile Include="Models\DeviceClasses\Device.cs" />
+    <Compile Include="Models\DeviceClasses\Fridge.cs" />
     <Compile Include="Models\DeviceClasses\Heater.cs" />
     <Compile Include="Models\DeviceClasses\Illuminator.cs" />
     <Compile Include="Models\DeviceContext.cs" />
     <Compile Include="Models\DeviceContextInitializer.cs" />
     <Compile Include="Models\Enums\BrightnessLevel.cs" />
+    <Compile Include="Models\Enums\FreezeMode.cs" />
     <Compile Include="Models\Enums\IlluminatorBrightness.cs" />
     <Compile Include="Models\Enums\Mode.cs" />
     <Compile Include="Models\ImplInterfaces\ChangeSetting.cs" />
     <Compile Include="Models\ImplInterfaces\Parametr.cs" />
     <Compile Include="Models\Interfaces\IBrightAble.cs" />
     <Compile Include="Models\Interfaces\IChangeSettingAble.cs" />
+    <Compile Include="Models\Interfaces\IFreezeAble.cs" />
     <Compile Include="Models\Interfaces\IModeAble.cs" />
     <Compile Include="Models\Interfaces\IModeDefaultSettingsAble.cs" />
     <Compile Include="Models\Interfaces\IParametrAble.cs" />

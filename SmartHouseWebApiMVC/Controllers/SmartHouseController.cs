@@ -49,7 +49,6 @@ namespace MVCSmartHouse.Controllers
             return RedirectToAction("Index");
         }
 
-        //SetBrightMode 
         public ActionResult SetIlluminatorBright(int? id, string ill)
         {
             if (id == null)
@@ -84,6 +83,42 @@ namespace MVCSmartHouse.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        //SetBrightMode 
+        //public ActionResult SetIlluminatorBright(int? id, string ill)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    IlluminatorModeAble illum = (IlluminatorModeAble)device;
+        //    Session["illBright"] = ill;
+        //    switch (ill)
+        //    {
+        //        case "BrightWhite":
+        //            illum.SetMaxMode();
+        //            break;
+        //        case "Daylight":
+        //            illum.SetMiddleMode();
+        //            break;
+        //        case "WarmWhite":
+        //            illum.SetMinMode();
+        //            break;
+        //        default:
+        //            illum.SetAutoMode();
+        //            break;
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
         //SetMode
         public ActionResult SetWarmMode(int? id, string warmMode)

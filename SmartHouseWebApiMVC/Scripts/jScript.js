@@ -5,6 +5,38 @@
         type: 'PUT',
         success: function (data) {
             debugger;
+            var src;
+            if(command === "on")
+            {
+                src = "/Content/image/onLamp.png"
+            }
+            else if (command === "off") {
+                src = "/Content/image/offLamp.png"
+            }
+            $("#state-" + id).attr("src", src)
+            $("#conditionRow-"+id).html(data);
+        }
+    });
+}
+//DELETE
+function sendDelAjax(id) {
+    debugger;
+    $.ajax({
+        url: '/api/values/Delete/' + id,
+        type: 'DELETE',
+        success: function () {
+            $("#dev-" + id).remove();
+        }
+    });
+}
+/*
+function sendSwitchParamAjax(id, command) {
+    debugger;
+    $.ajax({
+        url: '/api/values/' + id + '/' + command,
+        type: 'PUT',
+        success: function (data) {
+            debugger;
             $.ajax({
                 url: '/SmartHouse/RenderState' + $("#deviceName-" + id).val(),
                 type: 'POST',
@@ -19,7 +51,7 @@
         }
     });
 }
-
+*/
 //HandSetParams
 function sendSetParamAjax(id, command) {
     debugger;
@@ -43,17 +75,7 @@ function sendSetParamAjax(id, command) {
     });
 }
 
-//DELETE
-function sendDelAjax(id) {
-    debugger;
-    $.ajax({
-        url: '/api/values/Delete/' + id,
-        type: 'DELETE',
-        success: function () {
-            $("#result-" + id).remove();
-        }
-    });
-}
+
 
 ////AC Mode
 //function sendAjaxSetMode(id, command) {
