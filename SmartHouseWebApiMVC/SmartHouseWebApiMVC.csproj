@@ -179,12 +179,12 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\image\bg49.jpg" />
-    <Content Include="Content\image\offAC.png" />
+    <Content Include="Content\image\offAirCondition.png" />
     <Content Include="Content\image\offLamp.png" />
-    <Content Include="Content\image\onAC.png" />
+    <Content Include="Content\image\onAirCondition.png" />
     <Content Include="Content\image\onLamp.png" />
-    <Content Include="Content\image\RadiatorOff.png" />
-    <Content Include="Content\image\RadiatorOn.png" />
+    <Content Include="Content\image\offRadiator.png" />
+    <Content Include="Content\image\onRadiator.png" />
     <Content Include="Content\image\radioOff.png" />
     <Content Include="Content\image\radioOn.png" />
     <Content Include="Content\image\TVoff.png" />

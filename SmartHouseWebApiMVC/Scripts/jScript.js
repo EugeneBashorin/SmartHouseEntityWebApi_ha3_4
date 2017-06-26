@@ -1,4 +1,4 @@
-﻿function sendSwitchParamAjax(id, command) {
+﻿function sendSwitchParamAjax(id, command,devName) {
     debugger;
     $.ajax({
         url: '/api/values/' + id + '/' + command,
@@ -8,13 +8,26 @@
             var src;
             if(command === "on")
             {
-                src = "/Content/image/onLamp.png"
+                src = "/Content/image/on" + devName + ".png"
             }
             else if (command === "off") {
-                src = "/Content/image/offLamp.png"
+                src = "/Content/image/off" + devName + ".png"
             }
             $("#state-" + id).attr("src", src)
             $("#conditionRow-"+id).html(data);
+        }
+    });
+}
+
+//HandSetParams
+function sendSetParamAjax(id, command) {
+    debugger;
+    $.ajax({
+        url: '/api/values/' + id + '/' + command + '/' + $('#handSetPar-' + command + id).val(),
+        type: 'PUT',
+        success: function (data) {
+            debugger;
+            $("#conditionRow-" + id).html(data);
         }
     });
 }
@@ -29,6 +42,8 @@ function sendDelAjax(id) {
         }
     });
 }
+
+
 /*
 function sendSwitchParamAjax(id, command) {
     debugger;
@@ -53,27 +68,27 @@ function sendSwitchParamAjax(id, command) {
 }
 */
 //HandSetParams
-function sendSetParamAjax(id, command) {
-    debugger;
-    $.ajax({
-        url: '/api/values/' + id + '/' + command + '/' + $('#handSetPar-' + command + id).val(),
-        type: 'PUT',
-        success: function (data) {
-            debugger;
-            $.ajax({
-                url: '/SmartHouse/RenderState' + $("#deviceName-" + id).val(),
-                type: 'POST',
-                data: JSON.stringify(data),
-                dataType: 'html',
-                contentType: 'application/json',
-                success: function (partial) {
-                    debugger;
-                    $("#result-" + id).html(partial);
-                }
-            });
-        }
-    });
-}
+//function sendSetParamAjax(id, command) {
+//    debugger;
+//    $.ajax({
+//        url: '/api/values/' + id + '/' + command + '/' + $('#handSetPar-' + command + id).val(),
+//        type: 'PUT',
+//        success: function (data) {
+//            debugger;
+//            $.ajax({
+//                url: '/SmartHouse/RenderState' + $("#deviceName-" + id).val(),
+//                type: 'POST',
+//                data: JSON.stringify(data),
+//                dataType: 'html',
+//                contentType: 'application/json',
+//                success: function (partial) {
+//                    debugger;
+//                    $("#result-" + id).html(partial);
+//                }
+//            });
+//        }
+//    });
+//}
 
 
 

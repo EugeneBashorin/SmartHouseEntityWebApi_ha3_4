@@ -72,6 +72,28 @@ namespace SmartHouseWebApiMVC.Controllers
             return "Device: " + device.Name + "<br/>" + device.ToString();
         }
 
+        //Set temp Heater
+        [Route("api/values/{id}/{command}/{value}")]
+        public string PutSetParam(int id, string command, int value)
+        {
+            Device device = db.Devices.Find(id);
+            if (device != null)
+            {
+                switch (command)
+                {
+                    case "heatTemp":
+                        ((IHandSetTempWarmAble)device).HandSetTemperature(value);
+                        break;
+                    case "coldTemp":
+                        ((IHandSetTempColdAble)device).HandSetTemperature(value);
+                        break;
+                }
+            }
+            db.Entry(device).State = EntityState.Modified;
+            db.SaveChanges();
+            return "Device: " + device.Name + "<br/>" + device.ToString();
+        }
+
         //[Route("api/values/{id}/{command}")]
         //public HttpResponseMessage PutSwitchFunc(int id, string command)
         //{
@@ -101,26 +123,26 @@ namespace SmartHouseWebApiMVC.Controllers
 
 
 
-        [Route("api/values/{id}/{command}/{value}")]
-        public HttpResponseMessage PutSetParam(int id, string command, int value)
-        {
-            Device device = db.Devices.Find(id);
-            if (device != null)
-            {
-                switch (command)
-                {
-                    case "heatTemp":
-                        ((IHandSetTempWarmAble)device).HandSetTemperature(value);
-                        break;
-                    case "coldTemp":
-                        ((IHandSetTempColdAble)device).HandSetTemperature(value);
-                        break;
-                }
-            }
-            db.Entry(device).State = EntityState.Modified;
-            db.SaveChanges();
-            return Request.CreateResponse(HttpStatusCode.OK, device);
-        }
+        //[Route("api/values/{id}/{command}/{value}")]
+        //public HttpResponseMessage PutSetParam(int id, string command, int value)
+        //{
+        //    Device device = db.Devices.Find(id);
+        //    if (device != null)
+        //    {
+        //        switch (command)
+        //        {
+        //            case "heatTemp":
+        //                ((IHandSetTempWarmAble)device).HandSetTemperature(value);
+        //                break;
+        //            case "coldTemp":
+        //                ((IHandSetTempColdAble)device).HandSetTemperature(value);
+        //                break;
+        //        }
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return Request.CreateResponse(HttpStatusCode.OK, device);
+        //}
 
 
         [Route("api/values/SetMode/{value}")]
