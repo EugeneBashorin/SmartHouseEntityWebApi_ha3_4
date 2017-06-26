@@ -49,40 +49,48 @@ namespace MVCSmartHouse.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult SetIlluminatorBright(int? id, string ill)
+        protected override void Dispose(bool disposing)
         {
-            if (id == null)
+            if (disposing)
             {
-                return HttpNotFound();
+                db.Dispose();
             }
-
-            Device device = db.Devices.Find(id);
-
-            if (device == null)
-            {
-                return HttpNotFound();
-            }
-            IlluminatorModeAble illum = (IlluminatorModeAble)device;
-            Session["illBright"] = ill;
-            switch (ill)
-            {
-                case "BrightWhite":
-                    illum.SetMaxMode();
-                    break;
-                case "Daylight":
-                    illum.SetMiddleMode();
-                    break;
-                case "WarmWhite":
-                    illum.SetMinMode();
-                    break;
-                default:
-                    illum.SetAutoMode();
-                    break;
-            }
-            db.Entry(device).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            base.Dispose(disposing);
         }
+        //public ActionResult SetIlluminatorBright(int? id, string ill)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+
+        //    Device device = db.Devices.Find(id);
+
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    IlluminatorModeAble illum = (IlluminatorModeAble)device;
+        //    Session["illBright"] = ill;
+        //    switch (ill)
+        //    {
+        //        case "BrightWhite":
+        //            illum.SetMaxMode();
+        //            break;
+        //        case "Daylight":
+        //            illum.SetMiddleMode();
+        //            break;
+        //        case "WarmWhite":
+        //            illum.SetMinMode();
+        //            break;
+        //        default:
+        //            illum.SetAutoMode();
+        //            break;
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
         //SetBrightMode 
         //public ActionResult SetIlluminatorBright(int? id, string ill)
@@ -121,103 +129,96 @@ namespace MVCSmartHouse.Controllers
         //}
 
         //SetMode
-        public ActionResult SetWarmMode(int? id, string warmMode)
-        {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
+        //public ActionResult SetWarmMode(int? id, string warmMode)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            Device device = db.Devices.Find(id);
+        //    Device device = db.Devices.Find(id);
 
-            if (device == null)
-            {
-                return HttpNotFound();
-            }
-            IWarmModeAble wMode = (IWarmModeAble)device;
-            Session["wMode"] = warmMode;
-            switch (warmMode)
-            {
-                case "Turbo":
-                    wMode.SetMaxMode();
-                    break;
-                case "Eco":
-                    wMode.SetMiddleMode();
-                    break;
-                case "Low":
-                    wMode.SetMinMode();
-                    break;
-                default:
-                    wMode.SetAutoMode();
-                    break;
-            }
-            db.Entry(device).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    IWarmModeAble wMode = (IWarmModeAble)device;
+        //    Session["wMode"] = warmMode;
+        //    switch (warmMode)
+        //    {
+        //        case "Turbo":
+        //            wMode.SetMaxMode();
+        //            break;
+        //        case "Eco":
+        //            wMode.SetMiddleMode();
+        //            break;
+        //        case "Low":
+        //            wMode.SetMinMode();
+        //            break;
+        //        default:
+        //            wMode.SetAutoMode();
+        //            break;
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
-        public ActionResult SetColdMode(int? id, string coldMode)
-        {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
+        //public ActionResult SetColdMode(int? id, string coldMode)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            Device device = db.Devices.Find(id);
+        //    Device device = db.Devices.Find(id);
 
-            if (device == null)
-            {
-                return HttpNotFound();
-            }
-            IColdModeAble cMode = (IColdModeAble)device;
-            Session["Mode"] = coldMode;
-            switch (coldMode)
-            {
-                case "Turbo":
-                    cMode.SetMaxMode();
-                    break;
-                case "Eco":
-                    cMode.SetMiddleMode();
-                    break;
-                case "Low":
-                    cMode.SetMinMode();
-                    break;
-                default:
-                    cMode.SetAutoMode();
-                    break;
-            }
-            db.Entry(device).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        //    if (device == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    IColdModeAble cMode = (IColdModeAble)device;
+        //    Session["Mode"] = coldMode;
+        //    switch (coldMode)
+        //    {
+        //        case "Turbo":
+        //            cMode.SetMaxMode();
+        //            break;
+        //        case "Eco":
+        //            cMode.SetMiddleMode();
+        //            break;
+        //        case "Low":
+        //            cMode.SetMinMode();
+        //            break;
+        //        default:
+        //            cMode.SetAutoMode();
+        //            break;
+        //    }
+        //    db.Entry(device).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
         //Partial for Illuminator
-        public PartialViewResult RenderStateLamp(Illuminator model)
-        {
-         return PartialView("PartialLampView", model);
-        }
+        //public PartialViewResult RenderStateLamp(Illuminator model)
+        //{
+        // return PartialView("PartialLampView", model);
+        //}
 
         //Partial for Heater
-        public PartialViewResult RenderStateHeater(Heater model)
-        {
-            return PartialView("PartialHeaterView", model);
-        }
+        //public PartialViewResult RenderStateHeater(Heater model)
+        //{
+        //    return PartialView("PartialHeaterView", model);
+        //}
 
         //Partial for AirCondition
-        public PartialViewResult RenderStateAC(AirCondition model)
-        {
-            return PartialView("PartialACView", model);
-        }
+        //public PartialViewResult RenderStateAC(AirCondition model)
+        //{
+        //    return PartialView("PartialACView", model);
+        //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-         
+
+
         //WebApi
 
         //public ActionResult MainFunc(int? id, string command)

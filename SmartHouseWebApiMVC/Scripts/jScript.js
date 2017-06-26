@@ -7,17 +7,17 @@ function Action(id) {
     $("#on-" + id).click(function (e) {
         e.preventDefault();
         debugger;
-            $.ajax({
-                url: '/api/values/' + id + '/on',
-                type: "PUT",
-                success: function (data) {
-                    debugger;
-                    var src;
-                        src = "/Content/image/on" + devName + ".png"
-                    $("#state-" + id).attr("src", src)
-                    $("#conditionRow-" + id).html(data);
-                }
-            });
+        $.ajax({
+            url: '/api/values/' + id + '/on',
+            type: "PUT",
+            success: function (data) {
+                debugger;
+                var src;
+                src = "/Content/image/on" + devName + ".png"
+                $("#state-" + id).attr("src", src)
+                $("#conditionRow-" + id).html(data);
+            }
+        });
     });
 
     $("#off-" + id).click(function (e) {
@@ -29,13 +29,13 @@ function Action(id) {
             success: function (data) {
                 debugger;
                 var src;
-                    src = "/Content/image/off" + devName + ".png"
+                src = "/Content/image/off" + devName + ".png"
                 $("#state-" + id).attr("src", src)
                 $("#conditionRow-" + id).html(data);
             }
         });
     });
-   
+
     $("#incT-" + id).click(function (e) {
         e.preventDefault();
         debugger;
@@ -43,7 +43,7 @@ function Action(id) {
             url: '/api/values/' + id + '/IncTemp',
             type: "PUT",
             success: function (data) {
-                debugger;               
+                debugger;
                 $("#conditionRow-" + id).html(data);
             }
         });
@@ -90,9 +90,21 @@ function Action(id) {
         });
     });
 
+    //SetModeAllDev
+    $("#setMode-" + id).click(function (e) {
+        e.preventDefault();
+        debugger;
+        $.ajax({
+            url: '/api/values/SetBright/' + id + "/" + $("#listMode-" + id).val(),
+            type: 'PUT',
+            success: function (data) {
+                debugger;
+                $("#conditionRow-" + id).html(data);
+            }
+        });
+    });
 
-   
-    
+
     ////AC Mode
     //function sendAjaxSetMode(id, command) {
     //    //debugger;

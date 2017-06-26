@@ -26,8 +26,8 @@
         foreach (var item in Model)
         {
             <div class="device-div" id="dev-@item.Id">
-                @* SET OnOfDel WebAPI*@             
-                 <div class="conditionRow" id="conditionRow-@item.Id">
+                @* SET OnOfDel WebAPI*@
+                <div class="conditionRow" id="conditionRow-@item.Id">
                     Device: @item.Name
                     <br />
                     @item.ToString()
@@ -47,56 +47,49 @@
                 <br /><br />
 
                 @if (item is IlluminatorModeAble)
-                {                  
-                    <input type="hidden" id="devName-@item.Id" value="Lamp" name="devName">                    
+                {
+                    <input type="hidden" id="devName-@item.Id" value="Lamp" name="devName">
                     @* Image *@
-                    if (item.State == true)
-                    {
+                if (item.State == true)
+                {
                     <img src="~/Content/image/onLamp.png" id="state-@item.Id" class="img" alt="Lamp On">
-                    }
-                    else
-                    {
+                }
+                else
+                {
                     <img src="~/Content/image/offLamp.png" id="state-@item.Id" class="img" alt="Lamp Off">
-                    }
+                }
+                <br>
                     <br>
-                    <br>
-                    @* SET MODE BrightMode*@
+                    @*SET MODE BrightMode*@
                     @Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
-                               IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
-                        (string)Session["illBright"], new { id = "brMode", @class = "dropDownDeviceList" })
-
-                    <input type="submit" id="@item.Id" formaction="SetIlluminatorBright/@item.Id" class="button" value="Set bright" />
-                    @* SET MODE Api *@
-                    <br>@*<br>
-                        <span>
-                            <a id="bri-@(Model.Id)" onclick='sendAjaxSetBright(@Model.Id)' class="button">SetBrightApi</a>
-                        </span>
-                        <br>
-                        <br>*@
-                    }
-
-
-
-                    @* Heater *@
-                    @if (item is IHandSetTempWarmAble)
-                    {
-                        <input type="hidden" id="devName-@item.Id" value="Radiator" name="devName">
-                        @* Image *@
-                    if (item.State == true)
-                    {
-                        <img src="~/Content/image/onRadiator.png" id="state-@item.Id" class="img" alt="Radiator On">
-                    }
-                    else
-                    {
-                        <img src="~/Content/image/offRadiator.png" id="state-@item.Id" class="img" alt="Radiator Off">
-                    }
+                               IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),/*
+                        (string)Session["illBright"],*/ new { id = "listMode-" + item.Id, @class = "dropDownDeviceList" })
+                    <span>
+                        <a id="setMode-@(item.Id)" class="button">SetBright</a>
+                    </span>
                     <br>
-                        <br>
+                }
 
-                        @* SET TEMP Api *@
-                        <span>
-                            <a id="setParam-@(item.Id)" class="button">Set temperature</a>
-                        </span>
+                @* Heater *@
+                @if (item is IHandSetTempWarmAble)
+                    {
+                    <input type="hidden" id="devName-@item.Id" value="Radiator" name="devName">
+                    @* Image *@
+                if (item.State == true)
+                {
+                    <img src="~/Content/image/onRadiator.png" id="state-@item.Id" class="img" alt="Radiator On">
+                }
+                else
+                {
+                    <img src="~/Content/image/offRadiator.png" id="state-@item.Id" class="img" alt="Radiator Off">
+                }
+                <br>
+                    <br>
+
+                    @* SET TEMP Api *@
+                    <span>
+                        <a id="setParam-@(item.Id)" class="button">Set temperature</a>
+                    </span>
                         @Html.TextBox("warmTemper", "", new { id = "handSetPar-heatTemp" + item.Id, size = "3" })
                         <input type="hidden" id="InputCommand-@item.Id" value="heatTemp" name="SetWarmTemp">
                         <br />
@@ -111,40 +104,35 @@
                         </span>
                         <br />
                         <br />
-                        @* SET MODE Mode MVC*@
+                        @* SET MODE Mode*@
                         @Html.DropDownList("warmMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                                                 (string)Session["wMode"], new { id = "wMode" + item.Id, @class = "dropDownDeviceList" })
-                        <input type="submit" id="@item.Id" formaction="SetWarmMode/@item.Id" class="button" value="Set Warm Mode" />
-                        <br />
-
-                        @* SET MODE BrightMode*@
-                        @*@Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
-                                           IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
-                                    (string)Session["illBright"], new { id = "brMode", @class = "dropDownDeviceList" })
-
-                                <input type="submit" id="@item.Id" formaction="SetIlluminatorBright/@item.Id" class="button" value="Set bright" />
-                            }*@
-
-                    }
-                    @* AirCondition *@
-                    @if (item is IHandSetTempColdAble)
-                    {                        
-                        <input type="hidden" id="devName-@item.Id" value="AirCondition" name="devName">
-                        @* Image *@
-                    if (item.State == true)
-                    {
-                        <img src="~/Content/image/onAirCondition.png" id="state-@item.Id" class="img" alt="AirCondition On">
-                    }
-                    else
-                    {
-                        <img src="~/Content/image/offAirCondition.png" id="state-@item.Id" class="img" alt="AirCondition Off">
-                    }
-                    <br>
-                        <br>
-                        @* SET TEMP Api *@
+                                                 /*(string)Session["wMode"],*/ new { id = "listMode-" + item.Id, @class = "dropDownDeviceList" })
+                        @* SET MODE Api *@
                         <span>
-                            <a id="setParam-@(item.Id)" class="button">Set temperature</a>
+                            <a id="setMode-@(item.Id)" class="button">SetBright</a>
                         </span>
+                        <br>
+                }
+
+                @* AirCondition *@
+                @if (item is IHandSetTempColdAble)
+                {
+                    <input type="hidden" id="devName-@item.Id" value="AirCondition" name="devName">
+                    @* Image *@
+                if (item.State == true)
+                {
+                    <img src="~/Content/image/onAirCondition.png" id="state-@item.Id" class="img" alt="AirCondition On">
+                }
+                else
+                {
+                    <img src="~/Content/image/offAirCondition.png" id="state-@item.Id" class="img" alt="AirCondition Off">
+                }
+                <br>
+                    <br>
+                    @* SET TEMP Api *@
+                    <span>
+                        <a id="setParam-@(item.Id)" class="button">Set temperature</a>
+                    </span>
                         @Html.TextBox("coldTemper", "", new { id = "handSetPar-coldTemp" + item.Id, size = "3" })
                         <input type="hidden" id="InputCommand-@item.Id" value="coldTemp" name="SetColdTemp">
                         <br />
@@ -160,38 +148,30 @@
                         <br />
                         @* SET MODE Mode MVC*@
                         @Html.DropDownList("coldMode", new SelectList(new[] { Mode.Turbo.ToString(), Mode.Eco.ToString(), Mode.Low.ToString(), Mode.Auto.ToString() }),
-                         (string)Session["cMode"], new { id = "wMode" + item.Id, @class = "dropDownDeviceList" })
-                        <input type="submit" id="@item.Id" formaction="SetColdMode/@item.Id" class="button" value="Set Cold Mode" />
-                        <br />
-
-                        @* SET MODE BrightMode*@
-                        @*@Html.DropDownList("ill", new SelectList(new[] {IlluminatorBrightness.BrightWhite.ToString(), IlluminatorBrightness.Daylight.ToString(),
-                                           IlluminatorBrightness.WarmWhite.ToString(),IlluminatorBrightness.Default.ToString()}),
-                                    (string)Session["illBright"], new { id = "brMode", @class = "dropDownDeviceList" })
-
-                                <input type="submit" id="@item.Id" formaction="SetIlluminatorBright/@item.Id" class="button" value="Set bright" />
-                            }*@
-
+                         /*(string)Session["cMode"],*/ new { id = "listMode-" + item.Id, @class = "dropDownDeviceList" })
+                        <span>
+                            <a id="setMode-@(item.Id)" class="button">SetBright</a>
+                        </span>
+                }
+                @*@if (item is IlluminatorModeAble)
+                    {
+                        <div id="result-@item.Id">
+                            @Html.Partial("PartialLampView", item)
+                        </div>
                     }
-                    @*@if (item is IlluminatorModeAble)
-                        {
-                            <div id="result-@item.Id">
-                                @Html.Partial("PartialLampView", item)
-                            </div>
-                        }
-                        else @if (item is IHandSetTempWarmAble)
-                        {
-                            <div id="result-@item.Id">
-                                @Html.Partial("PartialHeaterView", item)
-                            </div>
-                        }
-                        else @if (item is IHandSetTempColdAble)
-                        {
-                            <div id="result-@item.Id">
-                                @Html.Partial("PartialACView", item)
-                            </div>
-                        }*@
-</div>
+                    else @if (item is IHandSetTempWarmAble)
+                    {
+                        <div id="result-@item.Id">
+                            @Html.Partial("PartialHeaterView", item)
+                        </div>
+                    }
+                    else @if (item is IHandSetTempColdAble)
+                    {
+                        <div id="result-@item.Id">
+                            @Html.Partial("PartialACView", item)
+                        </div>
+                    }*@
+            </div>
             <script>
                 var id = $("#Index-" + @item.Id).val()
                 Action(id);
@@ -199,6 +179,5 @@
         }
     }
     @Scripts.Render("~/bundles/jScript")
-    <script src="~/Scripts/jScript.js"></script>
 </body>
 </html>
